@@ -1,20 +1,42 @@
 name: Daily warmup
 on:
   push:
-  schedule:
-    - cron: "0 5 * * *"
   workflow_dispatch: {}
 
 jobs:
   warmup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v4
+      - name: 1. Debug Environment Info
+        run: |
+          echo "=== CLI Tool Versions ==="
+          echo "Node version: $(node -v)"
+          echo "NPM version: $(npm -v)"
+
+      - name: 2. Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
-      - name: Send ping
+
+      - name: 3. Install Claude Code
+        run: |
+          echo "Installing @anthropic-ai/claude-code..."
+          npm install -g @anthropic-ai/claude-code
+
+      - name: 4. Debug Token & Auth Status
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: claude -p "ping"
+        run: |
+          echo "=== Testing Claude Authentication ==="
+          if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "❌ ERROR: CLAUDE_CODE_OAUTH_TOKEN is empty! GitHub cannot read your secret."
+            exit 1
+          else
+            echo "✅ Secret detected in environment. Checking authentication status..."
+            claude auth status --text || echo "⚠️ Status check failed, proceeding to ping anyway..."
+          fi
+
+      - name: 5. Send ping with Verbose Logging
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: claude -p "ping" --verbose
