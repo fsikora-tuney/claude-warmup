@@ -1,10 +1,9 @@
 name: Daily warmup
 on:
-  push: # 👈 Temporary: This forces GitHub to see the action immediately
-    branches: ["**"] # 👈 Matches any branch you push to
+  push:
   schedule:
     - cron: "0 5 * * *"
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   warmup:
