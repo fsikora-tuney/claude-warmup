@@ -2,6 +2,8 @@ name: Daily warmup
 on:
   push:
   workflow_dispatch: {}
+  schedule:
+    - cron: "12 5 * * *" # 05:12 UTC = 07:12 AM your time (UTC+2)
 
 jobs:
   warmup:
