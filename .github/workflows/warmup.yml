@@ -3,7 +3,7 @@ on:
   push:
   workflow_dispatch: {}
   schedule:
-    - cron: "12 4 * * *" # 04:12 UTC = 06:12 AM your time (UTC+2)
+    - cron: "12 5 * * *" # 04:12 UTC = 06:12 AM your time (UTC+2)
 
 jobs:
   warmup:
